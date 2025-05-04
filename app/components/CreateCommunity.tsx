@@ -1,7 +1,7 @@
 "use client";
 
 // CommunitySignupForm.tsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from "next/navigation";
 // Types
 type FormData = {

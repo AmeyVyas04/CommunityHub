@@ -1,19 +1,17 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-interface IComments extends Document {
+export interface IComment extends Document {
+  communityName: string;
   fullName: string;
   comment: string;
-  communityName: string;
   createdAt: Date;
 }
 
-const commentSchema = new Schema<IComments>({
-  fullName: { type: String, required: true },
-  comment: { type: String, required: true }, // ✅ removed unique: true
+const CommentSchema = new Schema<IComment>({
   communityName: { type: String, required: true },
+  fullName: { type: String, required: true },
+  comment: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-const Comment = mongoose.models.Comment || mongoose.model<IComments>('Comment', commentSchema);
-
-export default Comment;
+export default mongoose.models.Comment || mongoose.model<IComment>('Comment', CommentSchema);

@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link'; // Import Next.js Link component
-import { Search, Menu, X, Users, Plus, Bell, MessageSquare } from 'lucide-react';
+import {  Menu, X, Users, Plus,  } from 'lucide-react';
 
 interface NavbarProps {
   isLoggedIn?: boolean;
   username?: string;
 }
 
-const Navbar = ({ isLoggedIn = false, username = "" }: NavbarProps) => {
+const Navbar = ({ isLoggedIn = false,  }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

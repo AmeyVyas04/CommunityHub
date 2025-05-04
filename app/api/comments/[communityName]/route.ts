@@ -1,11 +1,13 @@
 import { NextResponse, NextRequest } from 'next/server';
-import connectMongo from '../../../lib/mongodb'; // adjust if needed
-import Comment from '@/app/models/comments';
+import connectMongo from '../../../lib/mongodb';
+import Comment, { IComment } from '@/app/models/comments'; // ensure IComment is exported
 
-export async function POST(req: NextRequest, { params }: { params: { communityName: string } }) {
+type Params = { params: { communityName: string } };
+
+export async function POST(req: NextRequest, { params }: Params) {
   try {
     const { communityName } = params;
-    const body = await req.json();
+    const body = await req.json() as { fullName: string; comment: string };
     const { fullName, comment } = body;
 
     if (!communityName || !fullName || !comment) {
@@ -31,31 +33,28 @@ export async function POST(req: NextRequest, { params }: { params: { communityNa
       { status: 201 }
     );
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error submitting comment:', error.message);
-    } else {
-      console.error('Unknown error', error);
-    }
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error submitting comment:', errorMessage);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-  
 }
 
-export async function GET(req: NextRequest, { params }: { params: { communityName: string } }) {
+export async function GET(_req: NextRequest, { params }: Params) {
   try {
     await connectMongo();
 
-    const comments = await Comment.find({ communityName: params.communityName }).sort({ createdAt: -1 });
+    const comments: IComment[] = await Comment.find({ communityName: params.communityName }).sort({ createdAt: -1 });
 
-    const formatted = comments.map((c: any) => ({
+    const formatted = comments.map((c) => ({
       username: c.fullName,
       text: c.comment,
       date: new Date(c.createdAt).toLocaleString(),
     }));
 
     return NextResponse.json(formatted);
-  } catch (error: any) {
-    console.error('Error fetching comments:', error.message || error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error fetching comments:', errorMessage);
     return NextResponse.json({ error: 'Failed to load comments' }, { status: 500 });
   }
 }
