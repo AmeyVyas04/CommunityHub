@@ -66,8 +66,8 @@ const PrivacyPolicy = () => {
           <ul className="list-disc pl-8">
             <li className="leading-relaxed">To provide and improve our services, including responding to your comments and inquiries.</li>
             <li className="leading-relaxed">To personalize your experience on our platform and provide you with content and services that may be of interest to you.</li>
-            <li className="leading-relaxed">To send you promotional emails or updates if you've opted-in to receive them.</li>
-            <li className="leading-relaxed">To monitor usage trends and improve our website's performance and functionality.</li>
+            <li className="leading-relaxed">To send you promotional emails or updates if youve opted-in to receive them.</li>
+            <li className="leading-relaxed">To monitor usage trends and improve our websites performance and functionality.</li>
           </ul>
         </motion.section>
 

@@ -408,7 +408,7 @@ const CommunitySignupForm: React.FC = () => {
                   {errors.communityName && (
                     <p className="mt-1 text-sm text-red-600">{errors.communityName}</p>
                   )}
-                  <p className="mt-1 text-sm text-gray-500">Choose a clear, descriptive name that represents your community's purpose.</p>
+                  <p className="mt-1 text-sm text-gray-500">Choose a clear, descriptive name that represents your communitys purpose.</p>
                 </div>
                 
                 <div className="form-group">

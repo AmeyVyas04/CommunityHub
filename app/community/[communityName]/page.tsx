@@ -22,7 +22,7 @@ const CommunityPage = () => {
   const { communityName } = useParams();
   const [communityData, setCommunityData] = useState<CommunityData | null>(null);
   const [members, setMembers] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>('');
   const [username, setUsername] = useState<string>('');

@@ -43,7 +43,7 @@ const AboutUs = () => {
         >
           <h2 className="text-2xl font-semibold text-indigo-700 mb-4">Our Mission</h2>
           <p className="leading-relaxed">
-            Our mission is to create a collaborative environment where individuals can engage with their communities, take part in impactful projects, and inspire positive change. Whether it's participating in a local cleanup or attending a workshop, we aim to make it easy for people to get involved and make a difference.
+            Our mission is to create a collaborative environment where individuals can engage with their communities, take part in impactful projects, and inspire positive change. Whether its participating in a local cleanup or attending a workshop, we aim to make it easy for people to get involved and make a difference.
           </p>
         </motion.section>
 
