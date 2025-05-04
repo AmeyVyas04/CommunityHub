@@ -2,9 +2,9 @@
 
 import { NextResponse } from 'next/server';
 import connectMongo from '../../lib/mongodb';
-import Community from '@/app/models/community'; // You'll need to define this model
-import { Types } from 'mongoose';
+import Community from '@/app/models/community';
 
+// POST handler to create a community
 export async function POST(req: Request) {
   try {
     const {
@@ -20,9 +20,9 @@ export async function POST(req: Request) {
       tags,
     } = await req.json();
 
-    // ✅ Basic validation
+    // ✅ Basic validation: ensure required fields are present
     if (
-      !fullName || !email ||  !communityName ||
+      !fullName || !email || !communityName ||
       !category || !description || !eligibility || !rules || !privacy
     ) {
       return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 
     await connectMongo();
 
-    // ✅ Check for duplicate community
+    // ✅ Check if community already exists by name
     const existing = await Community.findOne({ communityName });
     if (existing) {
       return NextResponse.json(
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Save new community
+    // ✅ Save new community to MongoDB
     const newCommunity = new Community({
       fullName,
       email,
@@ -66,6 +66,16 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.error('Error creating community:', error);
+
+    // Check if error is related to database connection or validation
+    if (error instanceof Error && error.message.includes('MongoError')) {
+      return NextResponse.json(
+        { error: 'Database connection error' },
+        { status: 500 }
+      );
+    }
+
+    // Catch-all for other errors
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

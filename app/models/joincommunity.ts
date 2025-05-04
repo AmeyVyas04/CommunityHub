@@ -1,5 +1,4 @@
-import mongoose, { Schema, model, models } from 'mongoose';
-
+import { Schema, model, models } from 'mongoose';
 const JoinRequestSchema = new Schema({
   communityName: {
     type: String,

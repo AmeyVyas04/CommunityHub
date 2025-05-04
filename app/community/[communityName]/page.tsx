@@ -27,7 +27,6 @@ const CommunityPage = () => {
   const [newComment, setNewComment] = useState<string>('');
   const [username, setUsername] = useState<string>('');
 
-  // Dummy data for Upcoming Events
   const upcomingEvents = [
     { title: 'River Cleanup Drive - Week 1', date: '2025-05-10', description: 'Join us for the first week of the cleaning drive along the river.' },
     { title: 'River Cleanup Drive - Week 2', date: '2025-05-17', description: 'Help us keep the momentum going for the second week.' },
@@ -64,7 +63,6 @@ const CommunityPage = () => {
         const res = await fetch(`/api/comments/${communityName}`);
         const data = await res.json();
         if (res.ok && Array.isArray(data)) {
-          // Sort by most recent date
           const sortedComments = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
           setComments(sortedComments);
         }
@@ -80,16 +78,15 @@ const CommunityPage = () => {
     }
   }, [communityName]);
 
-  // Handle comment submission
   const handleCommentSubmit = async () => {
     if (newComment.trim() === '' || username.trim() === '') return;
-  
+
     const commentData = {
       communityName,
       fullName: username,
       comment: newComment,
     };
-  
+
     try {
       const res = await fetch(`/api/comments/${communityName}`, {
         method: 'POST',
@@ -98,22 +95,19 @@ const CommunityPage = () => {
         },
         body: JSON.stringify(commentData),
       });
-  
+
       const data = await res.json();
-  
+
       if (res.ok) {
-        // Add the new comment directly to the state
         const newCommentWithDate = { 
-          username: username,  // Add the username from the input
-          text: newComment,    // Add the comment text from the input
-          date: new Date().toISOString()  // Add the current date
+          username: username,
+          text: newComment,
+          date: new Date().toISOString()
         };
-  
-        // Add the new comment to the state without needing to reload
+
         setComments((prevComments) => [newCommentWithDate, ...prevComments]);
-  
-        setNewComment(''); // Clear the comment input field
-        setUsername('');   // Clear the username input field
+        setNewComment('');
+        setUsername('');
       } else {
         console.error('Error:', data.error);
       }
@@ -121,7 +115,6 @@ const CommunityPage = () => {
       console.error('Error submitting comment:', error);
     }
   };
-  
 
   return (
     <>
@@ -138,7 +131,6 @@ const CommunityPage = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5, ease: 'easeOut' }}
         >
-          {/* Title */}
           <motion.h1
             className="text-4xl font-extrabold text-indigo-700 text-center mb-4"
             initial={{ y: -20, opacity: 0 }}
@@ -148,7 +140,6 @@ const CommunityPage = () => {
             {communityData ? communityData.communityName : 'Loading...'}
           </motion.h1>
 
-          {/* Meta Info */}
           <motion.div
             className="text-sm text-gray-600 text-center mb-4 space-y-1"
             initial={{ opacity: 0 }}
@@ -159,7 +150,6 @@ const CommunityPage = () => {
             <p><span className="font-medium text-gray-700">Eligibility:</span> {communityData ? communityData.eligibility : 'Loading...'}</p>
           </motion.div>
 
-          {/* Description */}
           <motion.p
             className="text-md text-gray-700 text-center leading-relaxed mb-6"
             initial={{ opacity: 0 }}
@@ -169,7 +159,6 @@ const CommunityPage = () => {
             {communityData ? communityData.description : 'Loading...'}
           </motion.p>
 
-          {/* Members Section */}
           {members.length > 0 && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -182,15 +171,12 @@ const CommunityPage = () => {
               </h2>
               <ul className="space-y-2 text-center">
                 {members.map((name, index) => (
-                  <li key={index} className="text-gray-700">
-                    {name}
-                  </li>
+                  <li key={index} className="text-gray-700">{name}</li>
                 ))}
               </ul>
             </motion.div>
           )}
 
-          {/* Upcoming Events Section */}
           <motion.div
             className="bg-indigo-50 p-6 rounded-xl mt-8"
             initial={{ opacity: 0 }}
@@ -209,7 +195,6 @@ const CommunityPage = () => {
             </div>
           </motion.div>
 
-          {/* Comment Section */}
           <motion.div
             className="mt-8 bg-indigo-50 p-6 rounded-xl"
             initial={{ opacity: 0 }}
@@ -218,7 +203,6 @@ const CommunityPage = () => {
           >
             <h2 className="text-xl font-semibold text-indigo-700 text-center mb-4">Comments</h2>
 
-            {/* Comment Form */}
             <div className="space-y-4 mb-6">
               <input
                 type="text"
@@ -242,7 +226,6 @@ const CommunityPage = () => {
               </button>
             </div>
 
-            {/* Display Comments */}
             <div className="space-y-4">
               {comments.map((comment, index) => (
                 <div key={index} className="p-4 bg-white rounded-md shadow-sm">

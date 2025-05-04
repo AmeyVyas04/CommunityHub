@@ -1,4 +1,5 @@
-import {  Twitter, Facebook, Instagram } from 'lucide-react';
+import { Twitter, Facebook, Instagram } from 'lucide-react';
+import Link from 'next/link'; // Import Next.js Link component
 import BackToTopButton from './BackToTopButton'; // Import the button
 
 const Footer = () => {
@@ -10,9 +11,21 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
-              <li><a href="/aboutus" className="hover:text-indigo-300">About Us</a></li>
-              <li><a href="/privacy" className="hover:text-indigo-300">Privacy Policy</a></li>
-              <li><a href="https://forms.visme.co/formsPlayer/dm4gp1de-contact-form" className="hover:text-indigo-300">Contact</a></li>
+              <li>
+                <Link href="/aboutus" className="hover:text-indigo-300">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-indigo-300">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <a href="https://forms.visme.co/formsPlayer/dm4gp1de-contact-form" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-300">
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -20,7 +33,6 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4">Follow Us</h3>
             <div className="flex space-x-4">
-              
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-300">
                 <Twitter className="w-6 h-6" />
               </a>
