@@ -3,7 +3,7 @@ import SignUpForm from "../components/SignUpForm";  // Import the component from
 const SignUpPage = () => {
   return (
     <div>
-      <SignUpForm />  // Render the SignUpForm component
+      <SignUpForm />  
     </div>
   );
 };
