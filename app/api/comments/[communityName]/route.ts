@@ -3,10 +3,10 @@ import connectMongo from '../../../lib/mongodb';
 import Comment from '../../../models/comments';
 
 // POST: Submit a new comment
-export async function POST(req: NextRequest, context: { params: { communityName: string } }) {
+export async function POST(request: NextRequest, context: { params: { communityName: string } }) {
   try {
-    const { communityName } = context.params;
-    const { fullName, comment } = await req.json();
+    const communityName = context.params.communityName;
+    const { fullName, comment } = await request.json();
 
     if (!communityName || !fullName || !comment) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -31,9 +31,9 @@ export async function POST(req: NextRequest, context: { params: { communityName:
 }
 
 // GET: Fetch comments
-export async function GET(_req: NextRequest, context: { params: { communityName: string } }) {
+export async function GET(request: NextRequest, context: { params: { communityName: string } }) {
   try {
-    const { communityName } = context.params;
+    const communityName = context.params.communityName;
 
     if (!communityName) {
       return NextResponse.json({ error: 'Community name is required' }, { status: 400 });
