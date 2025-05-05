@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
@@ -61,8 +62,9 @@ export async function GET(_req: NextRequest, { params }: { params: { communityNa
     }));
 
     return NextResponse.json(formattedComments, { status: 200 });
-  } catch (error: any) {
-    console.error('GET error:', error.message || error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('Error:', err.message || err);
   }
+  
 }
