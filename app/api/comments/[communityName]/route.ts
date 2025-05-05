@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Comment, { IComment } from '../../../models/comments';
 
-interface RouteParams {
-  params: {
-    communityName: string;
-  };
-}
-
 // POST: Add a comment
-export async function POST(req: NextRequest, { params }: RouteParams) {
+export async function POST(req: NextRequest, { params }: { params: { communityName: string } }) {
   try {
     const { communityName } = params;
     const { fullName, comment }: { fullName: string; comment: string } = await req.json();
@@ -40,7 +34,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 }
 
 // GET: Fetch comments for a community
-export async function GET(_req: NextRequest, { params }: RouteParams) {
+export async function GET(_req: NextRequest, { params }: { params: { communityName: string } }) {
   try {
     const { communityName } = params;
 
