@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import connectMongo from '../../../lib/mongodb'; // Adjust the path if needed
-import Comment, { IComment } from '@/app/models/comments';
+import Comment, { IComment } from '../../../models/comments';
+
 
 // Handle POST requests (submit a new comment)
 export async function POST(req: NextRequest, context: { params: { communityName: string } }) {
