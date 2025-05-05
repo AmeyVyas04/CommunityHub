@@ -2,50 +2,68 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Comment from '../../../models/comments';
 
-type CommentType = {
+// Define expected comment document shape
+interface CommentDoc {
   fullName: string;
   comment: string;
   createdAt: Date;
-};
-
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { communityName: string } }
-) {
-  const { communityName } = params;
-  const { fullName, comment }: { fullName: string; comment: string } = await req.json();
-
-  if (!communityName || !fullName || !comment) {
-    return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-  }
-
-  await connectMongo();
-
-  await Comment.create({
-    communityName,
-    fullName,
-    comment,
-    createdAt: new Date(),
-  });
-
-  return NextResponse.json({ message: 'Comment submitted' }, { status: 201 });
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { communityName: string } }
+// POST: Add a new comment
+export async function POST(
+  request: NextRequest,
+  context: { params: Record<string, string> }
 ) {
-  const { communityName } = params;
+  try {
+    const { communityName } = context.params;
+    const body = await request.json();
+    const { fullName, comment }: { fullName: string; comment: string } = body;
 
-  await connectMongo();
+    if (!communityName || !fullName || !comment) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
-  const comments = await Comment.find({ communityName }).sort({ createdAt: -1 });
+    await connectMongo();
 
-  const formatted = (comments as CommentType[]).map((c) => ({
-    username: c.fullName,
-    text: c.comment,
-    date: new Date(c.createdAt).toLocaleString(),
-  }));
+    await Comment.create({
+      communityName,
+      fullName,
+      comment,
+      createdAt: new Date(),
+    });
 
-  return NextResponse.json(formatted, { status: 200 });
+    return NextResponse.json({ message: 'Comment submitted' }, { status: 201 });
+  } catch (err) {
+    console.error('POST error:', err);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+// GET: Fetch comments for a community
+export async function GET(
+  _request: NextRequest,
+  context: { params: Record<string, string> }
+) {
+  try {
+    const { communityName } = context.params;
+
+    if (!communityName) {
+      return NextResponse.json({ error: 'Community name is required' }, { status: 400 });
+    }
+
+    await connectMongo();
+
+    const comments = await Comment.find({ communityName }).sort({ createdAt: -1 });
+
+    const formatted = comments.map((c: CommentDoc) => ({
+      username: c.fullName,
+      text: c.comment,
+      date: new Date(c.createdAt).toLocaleString(),
+    }));
+
+    return NextResponse.json(formatted, { status: 200 });
+  } catch (err) {
+    console.error('GET error:', err);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }
