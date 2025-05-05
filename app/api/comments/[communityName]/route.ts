@@ -4,9 +4,9 @@ import Comment, { IComment } from '../../../models/comments';
 
 
 // Handle POST requests (submit a new comment)
-export async function POST(req: NextRequest, context: { params: { communityName: string } }) {
+export async function POST(req: NextRequest, { params }: { params: { communityName: string } }) {
   try {
-    const { communityName } = context.params;
+    const { communityName } = params;
     const { fullName, comment }: { fullName: string; comment: string } = await req.json();
 
     if (!communityName || !fullName || !comment) {
@@ -36,9 +36,9 @@ export async function POST(req: NextRequest, context: { params: { communityName:
 }
 
 
-export async function GET(_req: NextRequest, context: { params: { communityName: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { communityName: string } }) {
   try {
-    const { communityName } = context.params;
+    const { communityName } = params;
     await connectMongo();
 
     const comments: IComment[] = await Comment.find({ communityName }).sort({ createdAt: -1 });
