@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Comment from '../../../models/comments';
 
+type CommentType = {
+  fullName: string;
+  comment: string;
+  createdAt: Date;
+};
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { communityName: string } }
@@ -35,7 +41,7 @@ export async function GET(
 
   const comments = await Comment.find({ communityName }).sort({ createdAt: -1 });
 
-  const formatted = comments.map((c: any) => ({
+  const formatted = (comments as CommentType[]).map((c) => ({
     username: c.fullName,
     text: c.comment,
     date: new Date(c.createdAt).toLocaleString(),
