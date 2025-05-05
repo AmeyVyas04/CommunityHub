@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Comment from '../../../models/comments';
 
+// Define the type for the comment document
+interface CommentDoc {
+  fullName: string;
+  comment: string;
+  createdAt: Date;
+}
+
 // This is the correct type for the second argument for App Router API routes in Next.js
 type RouteContext = {
   params: {
@@ -48,9 +55,11 @@ export async function GET(
 
     await connectMongo();
 
+    // Retrieve comments and type them properly
     const comments = await Comment.find({ communityName }).sort({ createdAt: -1 });
 
-    const formatted = comments.map((c: any) => ({
+    // Explicitly define the type of formatted array to avoid 'any'
+    const formatted = comments.map((c: CommentDoc) => ({
       username: c.fullName,
       text: c.comment,
       date: new Date(c.createdAt).toLocaleString(),
