@@ -2,25 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Comment from '../../../models/comments';
 
-// Define expected comment document shape
-interface CommentDoc {
-  fullName: string;
-  comment: string;
-  createdAt: Date;
-}
+// This is the correct type for the second argument for App Router API routes in Next.js
+type RouteContext = {
+  params: {
+    communityName: string;
+  };
+};
 
-// POST: Add a new comment
+// POST handler
 export async function POST(
-  request: NextRequest,
-  context: { params: Record<string, string> }
+  req: NextRequest,
+  { params }: RouteContext
 ) {
   try {
-    const { communityName } = context.params;
-    const body = await request.json();
-    const { fullName, comment }: { fullName: string; comment: string } = body;
+    const { communityName } = params;
+    const { fullName, comment } = await req.json();
 
     if (!communityName || !fullName || !comment) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
     await connectMongo();
@@ -33,37 +32,33 @@ export async function POST(
     });
 
     return NextResponse.json({ message: 'Comment submitted' }, { status: 201 });
-  } catch (err) {
-    console.error('POST error:', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch (error) {
+    console.error('POST error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 
-// GET: Fetch comments for a community
+// GET handler
 export async function GET(
-  _request: NextRequest,
-  context: { params: Record<string, string> }
+  _req: NextRequest,
+  { params }: RouteContext
 ) {
   try {
-    const { communityName } = context.params;
-
-    if (!communityName) {
-      return NextResponse.json({ error: 'Community name is required' }, { status: 400 });
-    }
+    const { communityName } = params;
 
     await connectMongo();
 
     const comments = await Comment.find({ communityName }).sort({ createdAt: -1 });
 
-    const formatted = comments.map((c: CommentDoc) => ({
+    const formatted = comments.map((c: any) => ({
       username: c.fullName,
       text: c.comment,
       date: new Date(c.createdAt).toLocaleString(),
     }));
 
     return NextResponse.json(formatted, { status: 200 });
-  } catch (err) {
-    console.error('GET error:', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch (error) {
+    console.error('GET error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
