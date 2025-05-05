@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '@/app/components/navbar';
-
+import Footer from '@/app/components/footer';
 type CommunityData = {
   communityName: string;
   category: string;
@@ -238,6 +238,7 @@ const CommunityPage = () => {
           </motion.div>
         </motion.div>
       </motion.div>
+      <Footer />
     </>
   );
 };

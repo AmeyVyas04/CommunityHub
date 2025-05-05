@@ -2,72 +2,65 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongo from '../../../lib/mongodb';
 import Comment from '../../../models/comments';
 
-// Define the type for the comment document
-interface CommentDoc {
-  fullName: string;
-  comment: string;
-  createdAt: Date;
-}
-
-// This is the correct type for the second argument for App Router API routes in Next.js
-type RouteContext = {
-  params: {
-    communityName: string;
-  };
-};
-
-// POST handler
-export async function POST(
-  req: NextRequest,
-  { params }: RouteContext
-) {
+// POST: Submit a new comment
+export async function POST(req: NextRequest, { params }: { params: { communityName: string } }) {
   try {
-    const { communityName } = params;
+    const { communityName } = await params; // Await the params object here
     const { fullName, comment } = await req.json();
 
+    // Validation for required fields
     if (!communityName || !fullName || !comment) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Establish MongoDB connection
     await connectMongo();
 
-    await Comment.create({
+    // Create a new comment in the database
+    const newComment = new Comment({
       communityName,
       fullName,
       comment,
-      createdAt: new Date(),
+      createdAt: new Date(), // Store the creation date
     });
 
+    // Save the comment and return the response
+    await newComment.save();
     return NextResponse.json({ message: 'Comment submitted' }, { status: 201 });
-  } catch (error) {
-    console.error('POST error:', error);
+  } catch (error: any) {
+    console.error('POST error:', error.message || error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 
-// GET handler
-export async function GET(
-  _req: NextRequest,
-  { params }: RouteContext
-) {
+// GET: Fetch comments
+export async function GET(_req: NextRequest, { params }: { params: { communityName: string } }) {
   try {
-    const { communityName } = params;
+    const { communityName } = await params; // Await the params object here
 
+    // Validate the communityName
+    if (!communityName) {
+      return NextResponse.json({ error: 'Community name is required' }, { status: 400 });
+    }
+
+    // Establish MongoDB connection
     await connectMongo();
 
-    // Retrieve comments and type them properly
-    const comments = await Comment.find({ communityName }).sort({ createdAt: -1 });
+    // Fetch comments for the given communityName and sort by creation date
+    const comments = await Comment.find({ communityName })
+      .sort({ createdAt: -1 }) // Sort in descending order of createdAt
+      .select('fullName comment createdAt') // Select only necessary fields
 
-    // Explicitly define the type of formatted array to avoid 'any'
-    const formatted = comments.map((c: CommentDoc) => ({
+    // Format comments to match frontend expectations
+    const formattedComments = comments.map((c) => ({
       username: c.fullName,
       text: c.comment,
-      date: new Date(c.createdAt).toLocaleString(),
+      date: new Date(c.createdAt).toLocaleString(), // Format date for frontend
     }));
 
-    return NextResponse.json(formatted, { status: 200 });
-  } catch (error) {
-    console.error('GET error:', error);
+    return NextResponse.json(formattedComments, { status: 200 });
+  } catch (error: any) {
+    console.error('GET error:', error.message || error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
