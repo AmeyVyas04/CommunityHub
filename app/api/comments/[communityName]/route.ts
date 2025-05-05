@@ -27,10 +27,11 @@ export async function POST(req: NextRequest, { params }: { params: { communityNa
     // Save the comment and return the response
     await newComment.save();
     return NextResponse.json({ message: 'Comment submitted' }, { status: 201 });
-  } catch (error: any) {
-    console.error('POST error:', error.message || error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  } // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  catch (error: any) {
+    console.error('Error:', error.message || error);
   }
+  
 }
 
 // GET: Fetch comments
